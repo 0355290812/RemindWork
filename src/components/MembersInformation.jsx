@@ -13,7 +13,7 @@ const MembersInformation = ({ project, setProject }) => {
     const [userChoose, setUserChoose] = useState(null);
     const { user } = useAuth();
 
-    const roleInProject = project?.members?.find(member => member.user._id === user._id).role;
+    const roleInProject = project?.members?.find(member => member.user?._id === user?._id)?.role;
 
     const onChangeRole = (user) => {
         setIsOpenModal(true);
@@ -113,7 +113,7 @@ const MembersInformation = ({ project, setProject }) => {
                                 <td className="px-6 py-4 text-center">
                                     <div className="flex justify-center items-center">
                                         <img
-                                            src={member.user.avatar}
+                                            src={member.user.avatar.includes('http') ? member.user.avatar : `http://localhost:3001/${member.user.avatar}`}
                                             alt={`Avatar of ${member.user.name}`}
                                             className="w-10 h-10 rounded-full"
                                         />
@@ -126,7 +126,7 @@ const MembersInformation = ({ project, setProject }) => {
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className="text-sm text-gray-500 dark:text-gray-400">
-                                        {member.status === 'accepted' ? 'Đã tham gia' : 'Chờ phê duyệt'}
+                                        {member.status === 'accepted' ? 'Đã tham gia' : 'Chờ chấp nhận'}
                                     </span>
                                 </td>
                                 {roleInProject === 'admin' && (

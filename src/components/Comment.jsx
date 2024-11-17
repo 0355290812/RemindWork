@@ -34,7 +34,7 @@ const Comment = ({ comment, onDeleteComment }) => {
     };
     return (
         <div className="flex flex-row mt-4 items-center">
-            <img className="w-10 h-10 rounded-full" src={comment.user.avatar} alt="Rounded avatar"></img>
+            <img className="w-10 h-10 rounded-full" src={comment.user.avatar.includes('http') ? comment.user.avatar : `http://localhost:3001/${comment.user.avatar}`} alt="Rounded avatar"></img>
             <div className="flex flex-col ml-2 bg-gray-100 rounded-lg p-2">
                 <div className="flex flex-row items-center">
                     <span className="font-semibold">{comment.user.name}</span>

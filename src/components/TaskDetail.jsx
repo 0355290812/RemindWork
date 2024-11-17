@@ -6,8 +6,7 @@ import { IoFlashOutline, IoFlashSharp } from "react-icons/io5";
 import { _markIsImportant } from '../api/task';
 import { IoPersonAddOutline } from "react-icons/io5";
 
-const TaskDetail = ({ task, onTaskChange, onOpenAddMemberToTaskModal }) => {
-    console.log("🚀 ~ TaskDetail ~ task:", task)
+const TaskDetail = ({ task, onTaskChange, onOpenAddMemberToTaskModal, role }) => {
 
     const getStatusClass = (status) => {
         switch (status) {
@@ -109,7 +108,7 @@ const TaskDetail = ({ task, onTaskChange, onOpenAddMemberToTaskModal }) => {
                         <div className="flex items-start space-x-3">
                             <div className="avatar m-0">
                                 <div className="w-8 rounded-full">
-                                    <img alt="image-admin" className="bg-base-200 rounded-full" src={task.user.avatar} style={{ objectFit: 'cover' }} />
+                                    <img alt="image-admin" className="bg-base-200 rounded-full" src={task.user.avatar.includes('http') ? task.user.avatar : `http://localhost:3001/${task.user.avatar}`} style={{ objectFit: 'cover' }} />
                                 </div>
                             </div>
                             <div>
@@ -146,7 +145,13 @@ const TaskDetail = ({ task, onTaskChange, onOpenAddMemberToTaskModal }) => {
                         <label className="text-xs font-bold">Checklist thực hiện</label>
                         <div
                             className='flex flex-row rounded-lg bg-blue-400 text-white p-2 items-center cursor-pointer mr-2'
-                            onClick={() => onOpenAddMemberToTaskModal()}
+                            onClick={() => {
+                                if (role !== 'employee') {
+                                    onOpenAddMemberToTaskModal()
+                                } else {
+                                    alert('Bạn không có quyền thêm người thực hiện công việc');
+                                }
+                            }}
                         >
                             <IoPersonAddOutline className='text-white text-lg ml-2 mr-2' />
                             <span className='text-xs'>Thêm người thực hiện</span>

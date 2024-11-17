@@ -3,6 +3,7 @@ import LogList from "./LogList";
 import MainInformation from "./MainInformation";
 import { _addCommentToTask, _deleteCommentFromTask } from "../api/task";
 import { useAuth } from "../context/AuthContext";
+import { _uploadFiles, _deleteFile } from "../api/task";
 
 const InformationTask = ({ task, onTaskChange }) => {
     const { user } = useAuth();
@@ -14,7 +15,7 @@ const InformationTask = ({ task, onTaskChange }) => {
 
     const onAddComment = async (comment) => {
         const newTask = await _addCommentToTask(task._id, comment);
-        task.comments.unshift({ ...comment, user: { name: user.name, avatar: user.avatar }, timestamps: new Date().toISOString() });
+        task.comments.unshift({ ...comment, user: { name: user.name, avatar: user.avatar }, timestamps: new Date(Date.now() - 1000).toISOString(), _id: newTask.task.comments[0]._id });
         onTaskChange(task);
     }
 
@@ -22,6 +23,25 @@ const InformationTask = ({ task, onTaskChange }) => {
         const newTask = await _deleteCommentFromTask(task._id, commentId);
         task.comments = task.comments.filter(c => c._id !== commentId);
         onTaskChange(task);
+    }
+
+    const onUploadFiles = async (files) => {
+        const res = await _uploadFiles(task._id, files);
+        task.files = res.task.files;
+        console.log(task.files);
+
+        onTaskChange(task);
+    }
+
+    const onDeleteFile = async (fileId) => {
+        try {
+            const newTask = await _deleteFile(task._id, fileId);
+            task.files = task.files.filter(f => f._id !== fileId);
+            onTaskChange(task);
+            alert("Xóa file thành công");
+        } catch (error) {
+            alert("Xóa file thất bại");
+        }
     }
 
     return (
@@ -67,6 +87,8 @@ const InformationTask = ({ task, onTaskChange }) => {
                             task={task}
                             onAddComment={onAddComment}
                             onDeleteComment={onDeleteComment}
+                            onUploadFiles={onUploadFiles}
+                            onDeleteFile={onDeleteFile}
                         />
                     </div>
                 )}

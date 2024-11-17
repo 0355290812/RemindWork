@@ -22,7 +22,7 @@ const LogList = ({ logs }) => {
                             {new Date(log.timestamps).toLocaleString()}
                         </time>
                         <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {log.user.email.split("@")[0]}
+                            {log.user.name}
                         </h3>
                         <p className="text-xs font-normal text-gray-500 dark:text-gray-400">
                             {log.action}
@@ -32,11 +32,23 @@ const LogList = ({ logs }) => {
             </ol>
             <div className="flex flex-row space-x-2">
                 <MdOutlineExpandMore
-                    onClick={handleExpand}
+                    onClick={() => {
+                        if (logs.length <= visibleLogs) {
+                            return;
+                        }
+                        handleExpand();
+                    }
+                    }
                     className={`w-6 h-6 text-gray-500 cursor-pointer rounded-full border-2 border-blue-400 ${logs.length <= visibleLogs ? 'opacity-50 cursor-default' : ''}`}
                 />
                 <MdOutlineExpandLess
-                    onClick={handleExpandLess}
+                    onClick={() => {
+                        if (logs.length <= 5) {
+                            return;
+                        }
+                        handleExpandLess();
+                    }
+                    }
                     className={`w-6 h-6 text-gray-500 cursor-pointer rounded-full border-2 border-blue-400 ${visibleLogs <= 5 ? 'opacity-50 cursor-default' : ''}`}
                 />
             </div>

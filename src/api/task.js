@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://remindworkcloneapi.onrender.com";
+const API_URL = 'http://localhost:3001';
 
 const getTasks = async () => {
     try {
@@ -239,6 +239,38 @@ const _addUserToTask = async (taskId, data) => {
     }
 }
 
+const _uploadFiles = async (taskId, data) => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.post(`${API_URL}/api/tasks/${taskId}/files`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+const _deleteFile = async (taskId, fileId) => {
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.delete(`${API_URL}/api/tasks/${taskId}/files/${fileId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
 export {
     getTasks,
     getTask,
@@ -255,5 +287,7 @@ export {
     _updateTask,
     _deleteTask,
     _markIsImportant,
-    _addUserToTask
+    _addUserToTask,
+    _uploadFiles,
+    _deleteFile
 };

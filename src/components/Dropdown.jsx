@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const Dropdown = ({ projects, onSelectProject, selectedProject }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-left cursor-pointer" ref={dropdownRef}>
             <button
                 id="dropdownDefaultButton"
                 onClick={toggleDropdown}
@@ -30,8 +43,7 @@ const Dropdown = ({ projects, onSelectProject, selectedProject }) => {
                         {projects.map((project) => (
                             <li key={project.id}>
                                 <div
-
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    className="block w-44 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                     onClick={() => {
                                         onSelectProject(project);
                                         setIsOpen(false);

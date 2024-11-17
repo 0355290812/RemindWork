@@ -12,6 +12,8 @@ import { _updateStatusTask, _deleteTask } from '../api/task';
 import UpdateTaskModal from '../components/UpdateTaskModal';
 import ConfirmModal from '../components/ConfirmModal';
 import AddUserToTaskModal from '../components/AddUserToTaskModal';
+import { useAuth } from '../context/AuthContext';
+import SpeedDial from '../components/SpeedDial';
 
 const TaskDetailPage = () => {
     const { id } = useParams();
@@ -26,11 +28,11 @@ const TaskDetailPage = () => {
     const [isDelete, setIsDelete] = useState(false);
     const [isOpenAddUserToTaskModal, setIsOpenAddUserToTaskModal] = useState(false);
     const [project, setProject] = useState({});
+    const [role, setRole] = useState('');
+    const { user } = useAuth();
 
     const location = useLocation();
     const navigate = useNavigate();
-
-    const { role } = location.state || {};
 
     const onTaskChange = (task) => {
         const newTask = { ...task };
@@ -51,6 +53,9 @@ const TaskDetailPage = () => {
         const fetchTask = async () => {
             try {
                 const response = await getTask(id);
+                const project = await getProject(response.project._id);
+                const role = project?.members?.find(member => member?.user?._id === user?._id)?.role;
+                setRole(role);
                 setTask(response);
                 setProject(response.project);
                 setIsLoading(false);
@@ -70,7 +75,7 @@ const TaskDetailPage = () => {
                 <div className="ml-64 flex-grow flex h-screen">
                     {!isLoading ? (
                         <>
-                            <TaskDetail task={task} onTaskChange={onTaskChange} onOpenAddMemberToTaskModal={() => setIsOpenAddUserToTaskModal(true)} />
+                            <TaskDetail task={task} onTaskChange={onTaskChange} onOpenAddMemberToTaskModal={() => setIsOpenAddUserToTaskModal(true)} role={role} />
                             <InformationTask task={task} onTaskChange={onTaskChange} />
                             <GroupButton
                                 role={role}

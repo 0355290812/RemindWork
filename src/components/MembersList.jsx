@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { format, subDays, startOfMonth, endOfMonth, subMonths, set } from 'date-fns';
+import React, { useState, useEffect, useRef } from "react";
+import { format, subDays, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 const MembersList = ({ project, tasks }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -7,6 +7,7 @@ const MembersList = ({ project, tasks }) => {
     const [endDate, setEndDate] = useState(new Date(project.endDate));
     const [selectedTime, setSelectedTime] = useState('');
     const [employees, setEmployees] = useState([]);
+    const dropdownRef = useRef(null);
 
     const handleSelectDateRange = (range) => {
         let start, end;
@@ -66,7 +67,7 @@ const MembersList = ({ project, tasks }) => {
                         return subTask.completed &&
                             ((new Date(subTask.createdAt) >= new Date(startDate) && new Date(subTask.createdAt) <= new Date(endDate))
                                 ||
-                                (subTask.dueDate === null)
+                                (subTask.dueDate === null && new Date(subTask.createdAt) <= new Date(endDate))
                                 ||
                                 (new Date(subTask.dueDate) >= new Date(startDate) && new Date(subTask.dueDate) <= new Date(endDate)));
                     });
@@ -75,12 +76,12 @@ const MembersList = ({ project, tasks }) => {
 
                 const totalCompletedOnTime = filteredTasks.reduce((count, assignee) => {
                     const onTimeSubTasks = assignee.subTasks.filter(subTask => {
-                        return (
-                            (new Date(subTask.toggleAt) <= new Date(subTask.dueDate) || subTask.dueDate === null)
+                        return (subTask.completed &&
+                            (subTask.dueDate ? new Date(subTask.toggleAt) <= new Date(subTask.dueDate) : new Date(subTask.toggleAt) <= new Date(project.endDate))
                             &&
                             ((new Date(subTask.createdAt) >= new Date(startDate) && new Date(subTask.createdAt) <= new Date(endDate))
                                 ||
-                                (subTask.dueDate === null)
+                                (subTask.dueDate === null && new Date(subTask.createdAt) <= new Date(project.endDate))
                                 ||
                                 (new Date(subTask.dueDate) >= new Date(startDate) && new Date(subTask.dueDate) <= new Date(endDate))));
                     });
@@ -88,7 +89,16 @@ const MembersList = ({ project, tasks }) => {
                 }, 0);
 
                 const totalSubTasks = filteredTasks.reduce((count, assignee) => {
-                    return count + assignee.subTasks.length;
+                    const totalSubTasks = assignee.subTasks.filter(subTask => {
+                        return (
+                            ((new Date(subTask.createdAt) >= new Date(startDate) && new Date(subTask.createdAt) <= new Date(endDate))
+                                ||
+                                (subTask.dueDate === null && new Date(subTask.createdAt) <= new Date(endDate))
+                                ||
+                                (new Date(subTask.dueDate) >= new Date(startDate) && new Date(subTask.dueDate) <= new Date(endDate))));
+                    });
+
+                    return count + totalSubTasks.length;
                 }, 0);
 
                 const newMember = {
@@ -108,6 +118,19 @@ const MembersList = ({ project, tasks }) => {
         }
     }, [startDate, endDate, project.members, tasks]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
         <div className="flex flex-col bg-base p-3 space-y-3 ml-2 w-full xl:w-8/12 xxl:w-9/12 mr-4">
             <div className="flex flex-row justify-between items-center">
@@ -124,7 +147,7 @@ const MembersList = ({ project, tasks }) => {
                     </button>
 
                     {isOpen && (
-                        <div className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+                        <div className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44" ref={dropdownRef}>
                             <ul className="py-2 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
                                 <li>
                                     <button onClick={() => handleSelectDateRange('7days')} className="block w-full text-left px-4 py-2 hover:bg-gray-100">
@@ -199,7 +222,7 @@ const MembersList = ({ project, tasks }) => {
                                 <td className="px-6 py-4 text-center">
                                     <div className="flex justify-center items-center">
                                         <img
-                                            src={employee.avatar}
+                                            src={employee.avatar.includes('http') ? employee.avatar : `http://localhost:3001/${employee.avatar}`}
                                             alt={`Avatar of ${employee.name}`}
                                             className="w-10 h-10 rounded-full"
                                         />

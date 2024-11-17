@@ -13,7 +13,7 @@ const Register = ({ email, setEmail, password, setPassword, handleRegister, erro
                 />
             </div>
             <div className="md:w-1/3 max-w-sm">
-                <div className="text-center md:text-left flex items-center">
+                {/* <div className="text-center md:text-left flex items-center">
                     <label className="mr-1">Sign up with</label>
                     <button
                         type="button"
@@ -29,7 +29,8 @@ const Register = ({ email, setEmail, password, setPassword, handleRegister, erro
                     <p className="mx-4 mb-0 text-center font-semibold text-slate-500">
                         Or
                     </p>
-                </div>
+                </div> */}
+                <label className="mr-1 mb-16 font-bold text-lg">Sign up</label>
                 {error && <p className="text-red-600 text-sm text-center">{error}</p>} { }
                 <input
                     className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"

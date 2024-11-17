@@ -65,6 +65,8 @@ const AddUserToTaskModal = ({ isOpen, onClose, project }) => {
     };
 
     const handleSubmit = () => {
+        if (selectedUsers.length === 0) return;
+
         const userIds = selectedUsers.map(user => user._id);
 
         addUsersToProject(project._id, { userIds: userIds })
@@ -110,7 +112,7 @@ const AddUserToTaskModal = ({ isOpen, onClose, project }) => {
                                 onClick={() => handleSelectUser(user)}
                                 className="p-2 cursor-pointer hover:bg-gray-100 flex flex-row"
                             >
-                                <img src={user.avatar} alt={user.name} className='w-6 h-6 mr-4 rounded-full' />
+                                <img src={user.avatar.includes('http') ? user.avatar : `http://localhost:3001/${user.avatar}`} alt={user.name} className='w-6 h-6 mr-4 rounded-full' />
                                 {user.email}
                             </li>
                         ))}
@@ -129,7 +131,7 @@ const AddUserToTaskModal = ({ isOpen, onClose, project }) => {
                     <button onClick={onClose} className="bg-red-300 text-white px-4 py-2 rounded-lg mr-2 hover:bg-red-400">
                         Đóng
                     </button>
-                    <button onClick={handleSubmit} className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
+                    <button onClick={handleSubmit} disabled={selectedUsers.length <= 0} className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
                         Thêm người dùng
                     </button>
                 </div>

@@ -1,8 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserMenu from './UserMenu';
 import Designer from '../assets/images/Designer.jpg';
+import NotificationsDropdown from './NotificationsDropDown';
+import { db } from '../services/firebase';
+import { useAuth } from '../context/AuthContext';
+import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
 
 const NavBar = () => {
+    const { user } = useAuth();
+    const [notifications, setNotifications] = useState([]);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user?._id) return;
+
+        try {
+
+            const notificationsRef = collection(db, "notifications");
+            const q = query(notificationsRef, where("to", "==", user._id));
+
+            const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const notificationsData = [];
+                querySnapshot.forEach((doc) => {
+                    notificationsData.push({ id: doc.id, ...doc.data() });
+                });
+
+                setNotifications(notificationsData.sort((a, b) => b.timestamp - a.timestamp));
+            });
+
+            return () => unsubscribe();
+        } catch (error) {
+            console.error("Error getting notifications:", error);
+        }
+    }, [user]);
+
     return (
         <nav className="fixed top-0 z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
             <div className="px-3 py-3 lg:px-5 lg:pl-3">
@@ -30,7 +62,7 @@ const NavBar = () => {
                                 ></path>
                             </svg>
                         </button>
-                        <a href="http://localhost:3000/home" className="flex ms-2 md:me-24">
+                        <div className="flex ms-2 md:me-24 cursor-pointer" onClick={() => { navigate('/home') }}>
                             <img
                                 src={Designer}
                                 className="h-8 me-3 rounded-full"
@@ -39,9 +71,10 @@ const NavBar = () => {
                             <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                                 RemindWork
                             </span>
-                        </a>
+                        </div>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
+                        <NotificationsDropdown notifications={notifications} />
                         <UserMenu />
                     </div>
                 </div>

@@ -11,6 +11,7 @@ import { useAuth } from '../context/AuthContext';
 import { getInformation } from '../api/user';
 import AddTask from '../components/AddTask';
 import AddProject from '../components/AddProject';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
     const [tasks, setTasks] = useState([]);
@@ -24,6 +25,15 @@ const HomePage = () => {
     const [isAdding, setIsAdding] = useState(false);
     const [isImportant, setIsImportant] = useState(false);
     const { user, setUser } = useAuth();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const lastPath = localStorage.getItem('lastPath');
+        if (lastPath) {
+            navigate(lastPath);
+            localStorage.removeItem('lastPath');
+        }
+    }, []);
 
     useEffect(() => {
         const fetchUserInformation = async () => {
@@ -32,7 +42,9 @@ const HomePage = () => {
                 _id: information._id,
                 email: information.email,
                 name: information.name,
-                avatar: information.avatar,
+                avatar: information.avatar.includes('http')
+                    ? information.avatar
+                    : `http://localhost:3001/${information.avatar}`,
             });
         };
 
@@ -47,6 +59,7 @@ const HomePage = () => {
                 setIsLoading(true);
                 const projectsRes = await getProjects();
                 setProjects(projectsRes);
+                setIsLoading(false);
 
                 if (projectsRes.length > 0) {
                     setSelectedProject(projectsRes[0]);
@@ -67,9 +80,18 @@ const HomePage = () => {
                 setIsLoading(true);
                 const tasksRes = await getTasksFromProject(selectedProject._id);
                 setRole(selectedProject.members.find(member => member.user._id === user._id).role);
-                setTasks(tasksRes);
-                setFilteredTasks(tasksRes);
-                setIsLoading(false);
+                if (selectedProject.members.find(member => member.user._id === user._id).role !== 'admin') {
+                    const tasks = tasksRes.filter(task => {
+                        return task.assigness.find(assignee => assignee.user._id === user._id);
+                    });
+                    setTasks(tasks);
+                    setFilteredTasks(tasks);
+                    setIsLoading(false);
+                } else {
+                    setTasks(tasksRes);
+                    setFilteredTasks(tasksRes);
+                    setIsLoading(false);
+                }
             } catch (error) {
                 console.log('Error fetching tasks:', error);
                 setIsLoading(false);
@@ -96,7 +118,8 @@ const HomePage = () => {
             <div className="flex pt-20">
                 <Sidebar />
                 {isLoading ? <div className="ml-64 flex-grow flex"> <Loading /> </div>
-                    : <div className="ml-64 flex-grow flex">
+                    :
+                    projects.length > 0 ? <div className="ml-64 flex-grow flex">
                         <div className="flex-grow">
                             <WorkUpdate
                                 tasks={filteredTasks}
@@ -116,8 +139,15 @@ const HomePage = () => {
                             <Statistics tasks={tasks} />
                         </div>
                         {role !== 'employee' && <AddButton onClick={() => setIsAdding(true)} />}
-                        {isAdding && <AddTask onClose={() => setIsAdding(false)} projectId={selectedProject._id} onSubmit={() => { setSelectedProject({ ...selectedProject }) }} />}
-                    </div>
+                        {isAdding && <AddTask
+                            onClose={() => setIsAdding(false)}
+                            projectId={selectedProject._id}
+                            onSubmit={() => { setSelectedProject({ ...selectedProject }) }}
+                            startDateProject={selectedProject.startDate}
+                            endDateProject={selectedProject.endDate}
+                        />}
+                    </div> : <span className="ml-64 flex-grow flex justify-center items-center text-lg font-semibold">Chưa có dự án nào</span>
+
                 }
             </div>
         </div>

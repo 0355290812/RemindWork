@@ -55,7 +55,7 @@ const ProjectInformation = ({ project, tasks }) => {
                     <div className="p-4 rounded-lg flex flex-col justify-start" style={{ maxWidth: 352 }} >
                         <div className="rounded-md border-2 border-blue-400">
                             <div className="flex flex-col items-center m-4">
-                                <span className={`mt-2 text-2xl text-blue-400 font-bold`}>
+                                <span className={`mt-2 text-2xl text-blue-400 font-bold text-center`}>
                                     {project.title}
                                 </span>
                                 <span className={`mb-2 text-lg text-gray-400 text-center`}>

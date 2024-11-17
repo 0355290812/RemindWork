@@ -1,9 +1,8 @@
-// public/firebase-messaging-sw.js
 
-importScripts('https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js');
+import { initializeApp } from "firebase/app";
+import { getMessaging } from "firebase/messaging/sw";
 
-firebase.initializeApp({
+const firebaseApp = initializeApp({
     apiKey: "AIzaSyCEfeTUDpM-yBy-s51yKQAAHeVxWDfPYcg",
     authDomain: "remindwork-e38ab.firebaseapp.com",
     projectId: "remindwork-e38ab",
@@ -13,17 +12,15 @@ firebase.initializeApp({
     measurementId: "G-CV3VM0X3C0"
 });
 
-const messaging = firebase.messaging();
+const messaging = getMessaging(firebaseApp);
 
-// Xử lý thông báo khi nhận
 messaging.onBackgroundMessage((payload) => {
     console.log('Received background message: ', payload);
-    // Tùy chỉnh hiển thị thông báo
     const notificationTitle = payload.notification.title;
     const notificationOptions = {
         body: payload.notification.body,
         icon: payload.notification.icon
     };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    window.self.registration.showNotification(notificationTitle, notificationOptions);
 });

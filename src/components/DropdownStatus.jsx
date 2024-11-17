@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const DropdownStatus = ({ selectedStatus, setSelectedStatus }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     const statuses = [
         { title: 'Tất cả', value: '' },
@@ -17,8 +18,21 @@ const DropdownStatus = ({ selectedStatus, setSelectedStatus }) => {
         setIsOpen(false);
     };
 
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative inline-block text-left">
+        <div className="relative inline-block text-left cursor-pointer" ref={dropdownRef}>
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}

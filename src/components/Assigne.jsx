@@ -70,7 +70,7 @@ const Assigne = ({ assigne, taskId, onSubTaskChange, onDeleteSubTask, onDeleteAs
         <div className="flex flex-col space-x-2 items-stretch w-full h-fit rounded-md">
             <div className="flex flex-row space-x-2 items-stretch w-full h-fit rounded-md justify-between">
                 <div className="flex flex-row items-center justify-center">
-                    <img className="rounded-full w-9" src={assigne.user.avatar} alt={assigne.user.name} />
+                    <img className="rounded-full w-9" src={assigne.user.avatar.includes('http') ? assigne.user.avatar : `http://localhost:3001/${assigne.user.avatar}`} alt={assigne.user.name} />
                     <div className="flex flex-col">
                         <div className="flex flex-row items-center">
                             <span className="text-lg font-bold text-blue-500 ml-2 mr-2">{assigne.user.name}</span>

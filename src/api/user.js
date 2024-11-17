@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://remindworkcloneapi.onrender.com";
+const API_URL = 'http://localhost:3001';
 
 export const getInformation = async () => {
     const token = localStorage.getItem('token');
@@ -44,4 +44,15 @@ export const getUsers = async (email) => {
     });
     return response.data;
 }
+
+export const updateDeviceToken = async (deviceToken) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.patch(`${API_URL}/api/users/device-token`, { deviceToken }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+}
+
 

@@ -1,25 +1,11 @@
 import React, { useState } from 'react';
 import { Datepicker } from "flowbite-react";
-import { _addTask } from '../api/task';
 
-const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProject }) => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [startDate, setStartDate] = useState(() => {
-        if (new Date(startDateProject).getTime() > new Date().getTime()) {
-            return new Date(startDateProject);
-        }
-        return new Date();
-    });
-    const [endDate, setEndDate] = useState(() => {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        if (tomorrow.getTime() > new Date(endDateProject).getTime()) {
-            return new Date(endDateProject);
-        }
-        return tomorrow;
-    });
-
+const EditProject = ({ onClose, project, onSubmit }) => {
+    const [title, setTitle] = useState(project.title);
+    const [description, setDescription] = useState(project.description);
+    const [startDate, setStartDate] = useState(new Date(project.startDate));
+    const [endDate, setEndDate] = useState(new Date(project.endDate));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,21 +15,14 @@ const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProjec
             return;
         }
 
-        const formattedStartDate = startDate ? new Date(startDate).toISOString() : '';
-        const formattedEndDate = endDate ? new Date(endDate).toISOString() : '';
+        try {
+            await onSubmit({ title, description, startDate, endDate });
+            alert("Dự án đã được cập nhật thành công!");
+        } catch (error) {
+            console.log('Error updating project:', error);
+        }
 
-        const taskData = {
-            title,
-            description,
-            startDate: formattedStartDate,
-            endDate: formattedEndDate,
-            projectId
-        };
-
-        await _addTask(taskData);
         onClose();
-        onSubmit();
-
     };
 
     const customTheme = {
@@ -127,27 +106,26 @@ const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProjec
                 }
             }
         }
-    }
-
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gray-600 bg-opacity-50">
             <div className="bg-white rounded-lg shadow dark:bg-gray-500 w-full max-w-md p-6">
                 <div className="flex justify-between items-center border-b pb-3 mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Tạo Nhiệm Vụ Mới</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Chỉnh Sửa Dự Án</h3>
                     <button type="button" onClick={onClose} className="text-gray-400 hover:bg-gray-200 p-2 rounded-full">
                         &times;
                     </button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tiêu đề</label>
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tên dự án</label>
                         <input
                             type="text"
                             className="block w-full p-2.5 border rounded-lg"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Nhập tiêu đề"
+                            placeholder="Nhập tên dự án"
                             required
                         />
                     </div>
@@ -157,7 +135,7 @@ const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProjec
                             className="block w-full p-2.5 border rounded-lg"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Nhập mô tả công việc"
+                            placeholder="Nhập mô tả"
                             rows="4"
                             required
                         />
@@ -168,20 +146,10 @@ const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProjec
                             <Datepicker
                                 theme={customTheme}
                                 value={startDate}
-                                onChange={date => {
-                                    if (endDate && new Date(date).getTime() >= new Date(endDate).getTime()) {
-                                        const newEndDate = new Date(date);
-                                        newEndDate.setDate(newEndDate.getDate() + 1);
-                                        setEndDate(newEndDate);
-                                        setStartDate(date);
-                                    }
-                                    setStartDate(date);
-                                }}
+                                onChange={setStartDate}
                                 placeholder="Chọn ngày bắt đầu"
                                 required
                                 dateFormat="dd/MM/yyyy"
-                                minDate={new Date()}
-                                maxDate={new Date(endDateProject)}
                             />
                         </div>
                         <span className="mx-4 text-gray-500 mb-2">đến</span>
@@ -190,25 +158,25 @@ const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProjec
                             <Datepicker
                                 theme={customTheme}
                                 value={endDate}
-                                onChange={date => {
-                                    if (startDate && new Date(date).getTime() <= new Date(startDate).getTime()) {
-                                        const newStartDate = new Date(date);
-                                        newStartDate.setDate(newStartDate.getDate() - 1);
-                                        setStartDate(newStartDate);
-                                        setEndDate(date);
+                                onChange={(newEndDate) => {
+                                    if (new Date(startDate).getTime() >= new Date(newEndDate).getTime()) {
+                                        alert("Ngày bắt đầu phải nhỏ hơn ngày kết thúc!");
+                                        return;
                                     }
-                                    setEndDate(date);
+                                    if (new Date(newEndDate) < new Date()) {
+                                        alert("Ngày kết thúc phải lớn hơn ngày hiện tại!");
+                                        return;
+                                    }
+                                    setEndDate(newEndDate);
                                 }}
                                 placeholder="Chọn ngày kết thúc"
                                 required
                                 dateFormat="dd/MM/yyyy"
-                                minDate={new Date(Date.now())}
-                                maxDate={new Date(endDateProject)}
                             />
                         </div>
                     </div>
-                    <button type="submit" className="w-full bg-blue-400 text-white rounded-lg p-2.5 mt-3">
-                        Tạo công việc
+                    <button type="submit" className="w-full bg-blue-400 text-white rounded-lg p-2.5 mt-3" onClick={handleSubmit}>
+                        Cập nhật dự án
                     </button>
                 </form>
             </div>
@@ -216,4 +184,4 @@ const AddTask = ({ onClose, projectId, onSubmit, startDateProject, endDateProjec
     );
 };
 
-export default AddTask;
+export default EditProject;

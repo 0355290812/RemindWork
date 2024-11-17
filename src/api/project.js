@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = 'https://remindworkcloneapi.onrender.com';
+const API_URL = 'http://localhost:3001';
 
 const getProjects = async () => {
     try {
@@ -86,5 +86,46 @@ const removeUserFromProject = async (projectId, memberId) => {
     }
 }
 
+const updateProject = async (projectId, data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`${API_URL}/api/projects/${projectId}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
 
-export { getProjects, getProject, createProject, addUsersToProject, updateRoleMember, removeUserFromProject };
+const leaveProject = async (projectId) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${API_URL}/api/projects/${projectId}/leave`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+}
+
+const deleteProject = async (projectId) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`${API_URL}/api/projects/${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+}
+
+export { deleteProject, leaveProject, getProjects, getProject, createProject, addUsersToProject, updateRoleMember, removeUserFromProject, updateProject };

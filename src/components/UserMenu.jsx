@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { updateDeviceToken } from '../api/user';
+import { useNavigate } from 'react-router-dom';
 
 const UserMenu = () => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef(null);
     const { user, setIsAuthenticated, setUser } = useAuth();
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -14,7 +17,12 @@ const UserMenu = () => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
         setUser(null);
+        updateDeviceToken('');
         window.location.href = '/login';
+    };
+
+    const handleClickSetting = () => {
+        navigate('/information');
     };
 
     useEffect(() => {
@@ -40,7 +48,7 @@ const UserMenu = () => {
                 <span className="sr-only">Open user menu</span>
                 <img
                     className="w-8 h-8 rounded-full"
-                    src={user?.avatar || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
+                    src={user?.avatar.includes('http') ? user?.avatar : `http://localhost:3001/${user?.avatar}` || "https://flowbite.com/docs/images/people/profile-picture-5.jpg"}
                     alt="user photo"
                 />
             </button>
@@ -55,31 +63,22 @@ const UserMenu = () => {
                             {user?.email}
                         </p>
                     </div>
-                    <ul className="py-1">
+                    <ul className="py-1 cursor-pointer">
                         <li>
-                            <a
-                                href="/home"
+                            <div
+                                onClick={handleClickSetting}
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                             >
-                                Dashboard
-                            </a>
+                                Cài đặt
+                            </div>
                         </li>
                         <li>
-                            <a
-                                href="/settings"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                            >
-                                Settings
-                            </a>
-                        </li>
-                        <li>
-                            <a
+                            <div
                                 onClick={signOut}
-                                href="#"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                             >
-                                Sign out
-                            </a>
+                                Đăng xuất
+                            </div>
                         </li>
                     </ul>
                 </div>

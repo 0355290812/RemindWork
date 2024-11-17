@@ -35,7 +35,9 @@ const RegisterPage = () => {
                     email: information.email,
                     name: information.name,
                     avatar: information.avatar,
-                })
+                });
+
+                alert('Đăng ký thành công');
                 return navigate('/home');
             } else {
                 setError(response.message);

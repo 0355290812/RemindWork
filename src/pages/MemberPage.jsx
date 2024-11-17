@@ -25,7 +25,7 @@ const MemberPage = () => {
             const fetchProject = async () => {
                 const projectRes = await getProject(projectId);
                 setProject(projectRes);
-                setRole(projectRes.members.find(member => member.user._id === user._id).role);
+                setRole(projectRes?.members?.find(member => member?.user?._id === user?._id)?.role);
                 setIsLoading(false);
             };
 

@@ -83,7 +83,7 @@ const AddUserToTaskModal = ({ isOpen, onClose, project, task, onTaskChange }) =>
                                 onClick={() => handleSelectUser(user)}
                                 className={`p-2 cursor-pointer hover:bg-gray-100 flex flex-row ${selectedUser._id === user.user._id ? 'bg-blue-200' : ''}`}
                             >
-                                <img src={user.user.avatar} alt={user.user.name} className='w-6 h-6 mr-4 rounded-full' />
+                                <img src={user.user.avatar.includes('http') ? user.user.avatar : `http://localhost:3001/${user.user.avatar}`} alt={user.user.name} className='w-6 h-6 mr-4 rounded-full' />
                                 {user.user.email} {console.log(user)}
                             </li>
                         ))}
@@ -102,7 +102,7 @@ const AddUserToTaskModal = ({ isOpen, onClose, project, task, onTaskChange }) =>
                     <button onClick={onClose} className="bg-red-300 text-white px-4 py-2 rounded-lg mr-2 hover:bg-red-400">
                         Đóng
                     </button>
-                    <button onClick={handleSubmit} className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
+                    <button onClick={handleSubmit} disabled={selectedUser.length <= 0} className="bg-blue-400 text-white px-4 py-2 rounded-lg hover:bg-blue-500">
                         Thêm người dùng
                     </button>
                 </div>

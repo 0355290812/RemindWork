@@ -85,7 +85,7 @@ const TaskItem = ({ task, role }) => {
                             width="50"
                             height="50"
                             className="bg-base-200 rounded-full"
-                            src={task.user.avatar}
+                            src={task.user.avatar.includes('http') ? task.user.avatar : `http://localhost:3001/${task.user.avatar}`}
                             style={{ objectFit: "cover" }}
                         />
                     </div>
@@ -104,7 +104,7 @@ const TaskItem = ({ task, role }) => {
                         <span className="label-text text-xs opacity-70">{status.label}</span>
                     </div>
                     <span className="label-text text-xs opacity-70">Tạo lúc: {formatDate(task.createdAt)}</span>
-                    {task.endDate < new Date().toISOString() && (
+                    {task.endDate < new Date().toISOString() && (task.status === "in-progress" || task.status === "pending" || task.status === "waiting-for-approval") && (
                         <div className='flex flex-row ml-1'>
                             <PiWarningOctagonLight color='red' />
                             <span className="label-text text-xs opacity-70 ml-0.5 text-red-600">Trễ</span>
@@ -115,7 +115,7 @@ const TaskItem = ({ task, role }) => {
                 {task.assigness && task.assigness.length > 0 && (
                     task.assigness.map((assign) => (
                         assign.subTasks && assign.subTasks.length > 0 && (
-                            <div className="hidden md:flex flex-row space-x-1 mt-2">
+                            <div className="hidden md:flex flex-row space-x-1 mt-2" key={assign._id}>
                                 <div className="w-6">
                                     {assign.subTasks[0].completed ? (
                                         <TbCheckbox

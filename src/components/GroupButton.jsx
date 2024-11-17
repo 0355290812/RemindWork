@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MdOutlineExpandLess } from "react-icons/md";
 import { IoPlayOutline, IoPlayForwardCircleOutline } from "react-icons/io5";
 import { FaRegCircleCheck } from "react-icons/fa6";
@@ -9,10 +9,17 @@ import { PiWarningCircle } from "react-icons/pi";
 
 const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleModal, setContentModal, setPendingAction, setLabelButton, setIsOpenModal }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     }
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsOpen(false);
+        }
+    };
 
     const handleClick = () => {
         if (taskStatus === 'pending') {
@@ -89,6 +96,13 @@ const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleM
         return {};
     };
 
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const { label, colorButton, icon } = renderButtonLabel();
 
     return (
@@ -119,13 +133,14 @@ const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleM
                         {isOpen && (
                             <div
                                 id="dropdown"
+                                ref={dropdownRef}
                                 className="absolute bottom-12 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
                             >
                                 <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
                                     {taskStatus === "pending" && role !== "employee" && (
                                         <li>
                                             <div
-                                                className="flex flex-row px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                className="flex flex-row cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 onClick={() => {
                                                     setTitleModal('Xác nhận hoàn thành');
                                                     setContentModal('Công việc sẽ chuyển sang trạng thái hoàn thành');
@@ -143,7 +158,7 @@ const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleM
                                     {taskStatus === "waiting-for-approval" && (
                                         <li>
                                             <div
-                                                className="flex flex-row px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                className="flex flex-row cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 onClick={() => {
                                                     setTitleModal('Xác nhận yêu cầu làm lại');
                                                     setContentModal('Công việc sẽ trở lại trạng thái đang thực hiện');
@@ -160,7 +175,7 @@ const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleM
                                     {taskStatus !== "completed" && taskStatus !== "paused" && (
                                         <li>
                                             <div
-                                                className="flex flex-row px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                className="flex flex-row cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 onClick={() => {
                                                     setTitleModal('Xác nhận tạm dừng');
                                                     setContentModal('Công việc sẽ được tạm dừng');
@@ -178,7 +193,7 @@ const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleM
                                     {taskStatus !== "completed" && (
                                         <li>
                                             <div
-                                                className="flex px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                className="flex cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                                 onClick={handleClickUpdate}
                                             >
                                                 <MdOutlineModeEdit className="w-5 h-5 mr-2" />
@@ -188,7 +203,7 @@ const GroupButton = ({ taskStatus, role, onAction, onUpdate, onDelete, setTitleM
                                     )}
                                     <li>
                                         <div
-                                            className="flex px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                            className="flex cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                             onClick={handleClickDelete}
                                         >
                                             <TiDeleteOutline className="w-5 h-5 mr-2" />

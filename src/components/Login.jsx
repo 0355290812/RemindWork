@@ -13,7 +13,7 @@ const Login = ({ email, setEmail, password, setPassword, handleLogin, error, loa
                 />
             </div>
             <div className="md:w-1/3 max-w-sm">
-                <div className="text-center md:text-left flex items-center">
+                {/* <div className="text-center md:text-left flex items-center">
                     <label className="mr-1">Sign in with</label>
                     <button
                         type="button"
@@ -29,7 +29,8 @@ const Login = ({ email, setEmail, password, setPassword, handleLogin, error, loa
                     <p className="mx-4 mb-0 text-center font-semibold text-slate-500">
                         Or
                     </p>
-                </div>
+                </div> */}
+                <label className="mr-1 mb-16 font-bold text-lg">Sign in</label>
                 {error && <p className="text-red-600 text-sm text-center">{error}</p>} { }
                 <input
                     className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded"
@@ -44,6 +45,7 @@ const Login = ({ email, setEmail, password, setPassword, handleLogin, error, loa
                     placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleLogin(e)}
                 />
                 <div className="mt-4 flex justify-between font-semibold text-sm">
                     <label className="flex text-slate-500 hover:text-slate-600 cursor-pointer">
@@ -52,7 +54,7 @@ const Login = ({ email, setEmail, password, setPassword, handleLogin, error, loa
                     </label>
                     <a
                         className="text-blue-400 hover:text-blue-500 hover:underline hover:underline-offset-4"
-                        href="#"
+                        href="/forgot-password"
                     >
                         Forgot Password?
                     </a>

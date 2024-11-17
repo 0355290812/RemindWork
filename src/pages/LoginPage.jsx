@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 import { login } from '../api/auth';
 import { useAuth } from '../context/AuthContext';
 import { getInformation } from '../api/user';
+import { updateDeviceToken } from '../api/user';
+import { getToken } from "firebase/messaging";
+import { messaging } from '../services/firebase';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -38,6 +41,26 @@ const LoginPage = () => {
                     name: information.name,
                     avatar: information.avatar,
                 })
+                Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                        getToken(messaging, {
+                            vapidKey: "BOXJkAGA464w2OBoYtO-7JIyN9m1GmT_weNzUKkeTVGTxn-vyUESTh-wG_2wRkO8i6zs7J1qAXjm_dqBIyn3Dk8"
+                        }).then((currentToken) => {
+                            if (currentToken) {
+                                console.log('Token:', currentToken);
+                                if (localStorage.getItem('token')) {
+                                    updateDeviceToken(currentToken);
+                                }
+                            } else {
+                                console.log('No registration token available. Request permission to generate one.');
+                            }
+                        }).catch((err) => {
+                            console.log('An error occurred while retrieving token. ', err);
+                        });
+                    } else {
+                        console.log('Unable to get permission to notify.');
+                    }
+                });
                 return navigate('/home');
             } else {
                 setError(response.message);
