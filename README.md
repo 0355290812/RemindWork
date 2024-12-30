@@ -68,3 +68,34 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Demo
+
+#### Đăng nhập, đăng ký
+<img width="1440" alt="Ảnh màn hình 2024-12-30 lúc 23 58 13" src="https://github.com/user-attachments/assets/06088b92-9213-463c-96f3-db12b0b293fa" />
+<img width="1440" alt="Ảnh màn hình 2024-12-30 lúc 23 58 07" src="https://github.com/user-attachments/assets/1ebb043b-8916-4011-8895-c083dbd48838" />
+
+#### Tạo dự án mới
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 00 18" src="https://github.com/user-attachments/assets/644fdc75-2244-4da2-be80-e137faa0351e" />
+
+#### Thêm người vào dự án
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 00 38" src="https://github.com/user-attachments/assets/16eb805f-a1f7-4ab8-be1d-3bd37fcc4d1e" />
+
+#### Phân quyền
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 02 57" src="https://github.com/user-attachments/assets/d6d51a61-774e-4074-98f1-1647ad77ca1c" />
+
+#### Xem chi tiết công việc
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 04 10" src="https://github.com/user-attachments/assets/7c50fc48-0fb4-4b7a-9fb7-9bc336935fe5" />
+
+#### Thêm người vào thực hiện công việc
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 03 51" src="https://github.com/user-attachments/assets/16c36bc7-1341-47fd-8360-33af4c15f0a3" />
+
+#### Thay đổi trạng thái công việc
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 13 00" src="https://github.com/user-attachments/assets/49d87211-ab72-436c-89f5-59efd9e50e71" />
+
+#### Thông báo
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 38 28" src="https://github.com/user-attachments/assets/53ad2fc4-9cfc-47b9-ad13-dae88be2764b" />
+
+#### Thay đổi thông tin cá nhân và tài khoản
+<img width="1440" alt="Ảnh màn hình 2024-12-31 lúc 00 06 59" src="https://github.com/user-attachments/assets/6591d77c-0d20-4107-8219-62780b3a2dad" />
+
